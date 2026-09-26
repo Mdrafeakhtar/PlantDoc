@@ -27,6 +27,37 @@ The project combines **deep learning, computer vision, Python, Flask, HTML/CSS/J
 - 📱 Responsive web interface
 - 🧩 JSON-based disease information database
 
+
+## 🖥️ Demo & Screenshots
+
+### Sample input image
+
+The repository includes a sample plant-leaf image used to demonstrate the image-input workflow.
+
+![Sample plant leaf input](docs/demo/sample-input.jpg)
+
+### Application screenshots
+
+For the strongest portfolio presentation, add screenshots of these three application states to `docs/screenshots/`:
+
+1. **Home / upload screen** — `home.png`
+2. **Prediction result** — `prediction.png`
+3. **Generated PDF report / QR result** — `report.png`
+
+Then replace this section with:
+
+```markdown
+![PlantDoc home screen](docs/screenshots/home.png)
+![PlantDoc prediction result](docs/screenshots/prediction.png)
+![PlantDoc report](docs/screenshots/report.png)
+```
+
+> The sample input image is included in the repository. Runtime uploads, generated reports, QR codes, and user data are intentionally excluded from Git.
+
+## 🔗 Demo
+
+A live deployment can be added here when the application is hosted. Until then, follow the local setup instructions above to run PlantDoc on your machine.
+
 ## 🧠 Machine Learning
 
 The application uses a fine-tuned **EfficientNetB4** image-classification model implemented with TensorFlow/Keras.
@@ -255,6 +286,14 @@ PlantDoc demonstrates practical experience in:
 - Image preprocessing and classification
 - Automated PDF and QR-code generation
 - Building an end-to-end machine-learning application
+
+## 💼 Why this project is portfolio-ready
+
+PlantDoc demonstrates an end-to-end workflow rather than only a trained model: image acquisition → preprocessing → deep-learning inference → confidence handling → disease information → report generation. It combines ML engineering with a usable web interface and application logic.
+
+### Key skills demonstrated
+
+`Python` `TensorFlow` `Keras` `EfficientNetB4` `Computer Vision` `Flask` `JavaScript` `HTML/CSS` `Image Classification` `Transfer Learning` `PDF Generation` `QR Codes`
 
 ## 👨‍💻 Author
 
