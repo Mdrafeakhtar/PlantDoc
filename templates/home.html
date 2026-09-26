@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlantDoc // Diagnostic Terminal</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  .layout {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 26px 20px 60px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 18px;
+  }
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* --- Scan frame --- */
+  .scan-frame {
+    position: relative;
+    background: var(--void);
+    border-radius: 4px;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+  }
+  .scan-frame img, .scan-frame video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .scan-frame .placeholder {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 20px;
+    letter-spacing: 1px;
+  }
+  .bracket { position: absolute; width: 26px; height: 26px; border: 2px solid var(--leaf); opacity: 0.85; }
+  .bracket.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+  .bracket.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+  .bracket.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+  .bracket.br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+  .scanline {
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--leaf), transparent);
+    box-shadow: 0 0 12px 2px rgba(57,255,136,0.7);
+    animation: sweep 2.6s linear infinite;
+    opacity: 0.9;
+  }
+  @keyframes sweep {
+    0% { top: 4%; }
+    50% { top: 94%; }
+    100% { top: 4%; }
+  }
+
+  .tag {
+    position: absolute;
+    bottom: 12px; left: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(7,11,10,0.75);
+    border: 1px solid var(--line);
+    padding: 4px 9px;
+    border-radius: 3px;
+    color: var(--leaf);
+    letter-spacing: 1px;
+  }
+  .tag.healthy { color: var(--leaf); border-color: var(--leaf-dim); }
+  .tag.disease { color: var(--amber); border-color: rgba(255,176,32,0.4); }
+  .tag.reject { color: var(--red); border-color: rgba(255,92,92,0.4); }
+
+  /* --- Upload controls --- */
+  .capture-row { display: flex; gap: 10px; margin-top: 12px; }
+  .capture-row .btn { width: auto; flex: 1; font-size: 12px; padding: 11px 10px; }
+
+  input[type="file"] { display: none; }
+  .file-label {
+    display: block;
+    text-align: center;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    padding: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .file-label:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* --- Diagnostic readout --- */
+  .readout-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .readout-line b { color: var(--text); font-weight: 600; }
+
+  .disease-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 19px;
+    color: var(--amber);
+    margin: 14px 0 16px;
+    line-height: 1.4;
+    text-shadow: 0 0 10px rgba(255,176,32,0.25);
+  }
+  .disease-name.healthy { color: var(--leaf); text-shadow: 0 0 10px rgba(57,255,136,0.3); }
+
+  .field-block { margin-bottom: 16px; }
+  .field-block h3 {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin: 0 0 6px;
+  }
+  .field-block p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .empty-readout {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 30px 10px;
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  .reject-box {
+    border: 1px solid rgba(255,92,92,0.4);
+    background: rgba(255,92,92,0.08);
+    border-radius: 4px;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 14px;
+  }
+
+  .history-strip { display: flex; flex-direction: column; gap: 8px; }
+  .history-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 8px 10px;
+    background: var(--panel-alt);
+    border: 1px solid var(--line-soft);
+    border-radius: 3px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+  .history-item span:first-child { color: var(--text); }
+
+  .report-btn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="crt-overlay"></div>
+
+<div class="topbar">
+  <div class="brand">Plant<span>Doc</span></div>
+  <div class="session">
+    <span><span class="dot"></span> LIVE</span>
+    <span>{{ session['user'] }}</span>
+    <a href="/logout">Log Out</a>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT: SCAN INPUT -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Leaf Scan Input</h2>
+      <span class="eyebrow" style="font-size:10px;">CAM / FILE</span>
+    </div>
+    <div class="panel-body">
+
+      <form id="scan-form" method="POST" action="/upload/" enctype="multipart/form-data">
+
+        <label for="farmer_name">Farmer / Operator Name</label>
+        <input type="text" id="farmer_name" name="farmer_name" placeholder="enter name" required
+               value="{{ request.form.get('farmer_name', '') }}">
+
+        <label>Sample Image</label>
+        <div class="scan-frame" id="scan-frame">
+          {% if imagepath %}
+            <img src="{{ imagepath }}" alt="scanned leaf">
+            <div class="scanline" style="display:none;" id="scanline"></div>
+          {% else %}
+            <div class="placeholder" id="frame-placeholder">// NO SAMPLE LOADED &<br>AWAITING LEAF IMAGE</div>
+            <video id="camera-feed" autoplay playsinline style="display:none;"></video>
+          {% endif %}
+          <div class="bracket tl"></div>
+          <div class="bracket tr"></div>
+          <div class="bracket bl"></div>
+          <div class="bracket br"></div>
+          {% if result %}
+            <div class="tag {{ 'healthy' if 'healthy' in prediction.name|lower else 'disease' }}">{{ prediction.name }}</div>
+          {% elif not_leaf %}
+            <div class="tag reject">NO LEAF DETECTED</div>
+          {% endif %}
+        </div>
+
+        <canvas id="camera-canvas" style="display:none;"></canvas>
+        <input type="hidden" name="camera_image" id="camera_image">
+
+        <div class="capture-row">
+          <label class="file-label" style="flex:1;" for="img-input">Upload File</label>
+          <button type="button" class="btn btn-ghost" id="btn-camera">Use Camera</button>
+        </div>
+        <input type="file" id="img-input" name="img" accept="image/*">
+
+        <button type="submit" class="btn" style="margin-top:16px;">Run Diagnosis</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: DIAGNOSTIC READOUT -->
+  <div style="display:flex; flex-direction:column; gap:18px;">
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Diagnostic Readout</h2>
+      </div>
+      <div class="panel-body">
+
+        {% if not_leaf %}
+          <div class="reject-box">
+            LEAF NOT DETECTED<br>
+            No plant leaf recognized in this sample. Reposition the sample and rescan.
+          </div>
+        {% elif result %}
+          <div class="readout-line">ANALYSIS COMPLETE — MATCH FOUND</div>
+          <div class="disease-name {{ 'healthy' if 'healthy' in prediction.name|lower else '' }}">{{ prediction.name }}</div>
+
+          <div class="field-block">
+            <h3>Cause</h3>
+            <p>{{ prediction.cause }}</p>
+          </div>
+          <div class="field-block">
+            <h3>Recommended Cure</h3>
+            <p>{{ prediction.cure }}</p>
+          </div>
+
+          <a href="/download-report" class="btn report-btn">Download PDF Report</a>
+        {% else %}
+          <div class="empty-readout">
+            [ STANDBY ]<br>
+            Load a leaf sample and run diagnosis to<br>see cause and cure data here.
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Recent Scans</h2>
+      </div>
+      <div class="panel-body">
+        {% if history %}
+          <div class="history-strip">
+            {% for item in history %}
+              <div class="history-item"><span>{{ item }}</span><span>#{{ loop.index }}</span></div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-readout" style="padding:14px 4px;">No scans logged this session.</div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/scanner.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlantDoc // Access Terminal</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(57,255,136,0.08), transparent 55%),
+      radial-gradient(ellipse at 80% 85%, rgba(47,224,255,0.06), transparent 50%);
+    pointer-events: none;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-card .eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .auth-card h1 {
+    font-size: 26px;
+    margin: 0 0 4px;
+    color: var(--text);
+  }
+  .auth-card h1 span { color: var(--leaf); text-shadow: 0 0 14px rgba(57,255,136,0.5); }
+  .auth-card .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+
+  .mode-toggle {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .mode-toggle button {
+    flex: 1;
+    background: var(--panel-alt);
+    border: none;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 0;
+    cursor: pointer;
+  }
+  .mode-toggle button.active {
+    background: rgba(57,255,136,0.12);
+    color: var(--leaf);
+  }
+
+  form { display: none; }
+  form.active { display: block; }
+
+  .scan-corner {
+    position: absolute;
+    width: 22px; height: 22px;
+    border: 2px solid var(--leaf);
+    opacity: 0.6;
+  }
+  .scan-corner.tl { top: -8px; left: -8px; border-right: none; border-bottom: none; }
+  .scan-corner.br { bottom: -8px; right: -8px; border-left: none; border-top: none; }
+
+  .footnote {
+    text-align: center;
+    margin-top: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="crt-overlay"></div>
+
+<div class="stage">
+  <div class="auth-card">
+    <div class="eyebrow"><span class="dot"></span> SYSTEM // ACCESS REQUIRED</div>
+    <h1>Plant<span>Doc</span></h1>
+    <div class="sub">Leaf diagnostic terminal — authenticate to continue</div>
+
+    <div class="mode-toggle">
+      <button type="button" id="btn-login" class="active">Log In</button>
+      <button type="button" id="btn-signup">Register</button>
+    </div>
+
+    <div class="panel" style="position:relative;">
+      <div class="scan-corner tl"></div>
+      <div class="scan-corner br"></div>
+      <div class="panel-body">
+
+        <form id="form-login" class="active" method="POST" action="/login">
+          <label for="li-user">Username</label>
+          <input type="text" id="li-user" name="username" placeholder="operator id" required autocomplete="username">
+          <label for="li-pass">Password</label>
+          <input type="password" id="li-pass" name="password" placeholder="••••••••" required autocomplete="current-password">
+          <button type="submit" class="btn" style="margin-top:20px;">Authenticate</button>
+          {% if request.args.get('error') %}
+          <div class="error-line">{{ request.args.get('error') }}</div>
+          {% endif %}
+        </form>
+
+        <form id="form-signup" method="POST" action="/signup">
+          <label for="su-user">Choose Username</label>
+          <input type="text" id="su-user" name="username" placeholder="operator id" required autocomplete="username">
+          <label for="su-pass">Choose Password</label>
+          <input type="password" id="su-pass" name="password" placeholder="••••••••" required autocomplete="new-password">
+          <button type="submit" class="btn" style="margin-top:20px;">Create Access</button>
+        </form>
+
+      </div>
+    </div>
+
+    <div class="footnote">PlantDoc v2 &nbsp;·&nbsp; AI Leaf Diagnostics &nbsp;·&nbsp; Session Encrypted</div>
+  </div>
+</div>
+
+<script>
+  const btnLogin = document.getElementById('btn-login');
+  const btnSignup = document.getElementById('btn-signup');
+  const formLogin = document.getElementById('form-login');
+  const formSignup = document.getElementById('form-signup');
+
+  btnLogin.addEventListener('click', () => {
+    btnLogin.classList.add('active');
+    btnSignup.classList.remove('active');
+    formLogin.classList.add('active');
+    formSignup.classList.remove('active');
+  });
+  btnSignup.addEventListener('click', () => {
+    btnSignup.classList.add('active');
+    btnLogin.classList.remove('active');
+    formSignup.classList.add('active');
+    formLogin.classList.remove('active');
+  });
+</script>
+</body>
+</html>
