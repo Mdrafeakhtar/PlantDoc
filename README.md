@@ -1,176 +1,267 @@
-# PlantDoc — AI Plant Disease Detection System
+# 🌿 PlantDoc — AI Plant Disease Detection
 
-PlantDoc is a Flask-based web application that uses a TensorFlow/Keras image-classification model to identify plant leaf diseases from uploaded images or a camera capture.
+> An AI-powered web application for detecting plant leaf diseases from images or live camera capture using **TensorFlow/Keras, EfficientNetB4, and Flask**.
 
-## Features
+[![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20App-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-FF6F00?logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+[![Computer Vision](https://img.shields.io/badge/Computer%20Vision-Image%20Classification-5C3EE8)](https://en.wikipedia.org/wiki/Computer_vision)
 
-- User login and registration
-- Upload a plant-leaf image
-- Capture a leaf image using the device camera
-- AI-based plant disease classification
-- Confidence-based rejection for uncertain/non-leaf images
-- Disease cause and recommended cure information
-- Recent scan history during the current session
-- PDF diagnostic report generation
-- QR code containing report information
-- Responsive web interface
+## 📌 Overview
 
-## Technology Stack
+**PlantDoc** is a full-stack machine-learning project that helps identify plant diseases from leaf images. A user can upload an image or capture one using a device camera, after which the trained deep-learning model predicts the disease class and presents relevant disease information and recommended care.
 
+The project combines **deep learning, computer vision, Python, Flask, HTML/CSS/JavaScript, and automated report generation** into a practical agriculture-focused application.
+
+## ✨ Features
+
+- 📷 Upload a plant-leaf image
+- 🎥 Capture an image using the device camera
+- 🤖 AI-based plant disease classification
+- 🎯 Confidence-based handling of uncertain predictions
+- 🌱 Disease cause and recommended cure information
+- 👤 User registration and login
+- 🕘 Recent scan history during the current session
+- 📄 Generate PDF diagnostic reports
+- 🔗 Generate QR codes containing report information
+- 📱 Responsive web interface
+- 🧩 JSON-based disease information database
+
+## 🧠 Machine Learning
+
+The application uses a fine-tuned **EfficientNetB4** image-classification model implemented with TensorFlow/Keras.
+
+| Item | Details |
+|---|---|
+| Model | EfficientNetB4 |
+| Framework | TensorFlow / Keras |
+| Input size | 160 × 160 pixels |
+| Task | Multi-class plant disease classification |
+| Model file | `plant_disease_recog_model_pwp.keras` |
+| Validation accuracy | ~94.6% (initial training) |
+| Post fine-tuning accuracy | ~98.7% |
+| Macro precision | ~98.4% |
+| Macro recall | ~98.2% |
+| Macro F1-score | ~98.3% |
+
+> **Note:** These metrics are from the project's reported validation/evaluation results. Performance on new field images can vary with lighting, camera quality, plant variety, background, and disease severity.
+
+## 🏗️ System Workflow
+
+```text
+                    ┌─────────────────────┐
+                    │      User Input      │
+                    │ Upload / Camera     │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Image Preprocessing │
+                    │ Resize → 160 × 160  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ EfficientNetB4      │
+                    │ TensorFlow / Keras  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Disease Prediction  │
+                    │ + Confidence        │
+                    └──────────┬──────────┘
+                               │
+                 ┌─────────────┴─────────────┐
+                 ▼                           ▼
+       ┌──────────────────┐        ┌──────────────────┐
+       │ Disease Details  │        │ Diagnostic PDF   │
+       │ Cause / Cure     │        │ + QR Code        │
+       └──────────────────┘        └──────────────────┘
+```
+
+## 🛠️ Technology Stack
+
+### Machine Learning
 - Python
-- Flask
-- TensorFlow / Keras
+- TensorFlow
+- Keras
+- EfficientNetB4
 - NumPy
 - Pillow
-- ReportLab
-- QRCode
-- HTML / CSS / JavaScript
 
-## Project Structure
+### Web Application
+- Flask
+- HTML5
+- CSS3
+- JavaScript
+
+### Reporting
+- ReportLab
+- QRCode generation
+
+### Data
+- JSON-based plant disease information
+
+## 📁 Project Structure
 
 ```text
 PlantDoc/
-├── app.py
-├── plant_disease.json
-├── requirements.txt
-├── README.md
-├── .gitignore
+├── app.py                         # Flask application
+├── plant_disease.json             # Disease information database
+├── requirements.txt               # Python dependencies
+├── README.md                      # Project documentation
+├── .gitignore                     # Files excluded from Git
+│
 ├── models/
-│   └── README.md
+│   ├── README.md                  # Model download/setup instructions
+│   └── plant_disease_recog_model_pwp.keras   # Download separately
+│
 ├── templates/
-│   ├── home.html
-│   └── login.html
+│   ├── home.html                  # Main application interface
+│   └── login.html                 # Login/registration interface
+│
 ├── static/
 │   ├── css/
-│   │   └── style.css
+│   │   └── style.css              # Application styling
 │   ├── js/
-│   │   └── scanner.js
+│   │   └── scanner.js             # Camera/scanner functionality
 │   └── qrcodes/
 │       └── .gitkeep
+│
 └── uploadimages/
+    └── .gitkeep                   # Runtime upload directory
 ```
 
-## Run locally
+## 🚀 Run Locally
 
-### 1. Create a virtual environment
+### 1. Clone the repository
 
-macOS/Linux:
+```bash
+git clone https://github.com/Mdrafeakhtar/PlantDoc.git
+cd PlantDoc
+```
+
+### 2. Create a virtual environment
+
+**macOS / Linux**
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Windows:
+**Windows**
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### 2. Install dependencies
+### 3. Install dependencies
 
 ```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 3. Download the trained model
+### 4. Add the trained model
 
-The trained model is approximately 203 MB, so it is not included in this GitHub source package.
+The trained model is approximately **203 MB**, so it is not stored directly in this Git repository.
 
-Download it from:
-
-https://drive.google.com/file/d/1Ond7UzrNOfdAXWedjlZr2sDXYU6MRBuj/view?usp=sharing
-
-Place it at:
+Download the model from the project's model location and place it at:
 
 ```text
 models/plant_disease_recog_model_pwp.keras
 ```
 
-### 4. Set the Flask secret key
+The repository's `models/README.md` contains the model setup information.
 
-macOS/Linux:
+### 5. Configure the Flask secret key
+
+**macOS / Linux**
 
 ```bash
 export PLANTDOC_SECRET_KEY="replace-with-a-long-random-secret"
 ```
 
-Windows PowerShell:
+**Windows PowerShell**
 
 ```powershell
 $env:PLANTDOC_SECRET_KEY="replace-with-a-long-random-secret"
 ```
 
-### 5. Start the application
+### 6. Start PlantDoc
 
 ```bash
 python app.py
 ```
 
-Open:
+Open the application at:
 
 ```text
 http://127.0.0.1:5000
 ```
 
-On first run, PlantDoc creates a local `users.json` file. It is intentionally ignored by Git because it contains user credentials.
+On first run, the application can create its local runtime user data. Local credential files are excluded from Git.
 
-## GitHub upload
+## 📊 Project Results
 
-After creating an empty repository named `PlantDoc` on GitHub:
+The model development reported the following evaluation results:
 
-```bash
-git init
-git add .
-git commit -m "Initial commit: PlantDoc AI plant disease detection"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/PlantDoc.git
-git push -u origin main
-```
+- **Initial validation accuracy:** ~94.6%
+- **Post fine-tuning accuracy:** ~98.7%
+- **Macro precision:** ~98.4%
+- **Macro recall:** ~98.2%
+- **Macro F1-score:** ~98.3%
 
-Replace `YOUR-USERNAME` with your GitHub username.
+These results demonstrate the model's performance on the project's evaluation data; they should not be interpreted as a guarantee of field-level diagnostic accuracy.
 
-## Important: trained model
+## 🔐 Security & Git Hygiene
 
-The trained model is about 203 MB. GitHub's normal repository upload has a 100 MB per-file limit, so the model is excluded by `.gitignore`.
-
-If you later want the model inside GitHub, use Git LFS or another large-file/model hosting service.
-
-## Security
-
-Do not commit:
-
-- `users.json`
-- `.env`
-- passwords
-- API keys
-- private credentials
-- private datasets
-
-The original development `users.json` contained plaintext passwords. It has deliberately been excluded from this GitHub-ready package.
-
-## Model details
-
-The application expects:
+The repository intentionally excludes runtime and sensitive files such as:
 
 ```text
-models/plant_disease_recog_model_pwp.keras
+users.json
+.env
+*.key
+*.pem
+__pycache__/
+.venv/
 ```
 
-Input images are resized to `160 × 160` before prediction.
+Never commit passwords, API keys, private credentials, or personal data.
 
-## Disclaimer
+## 🔬 Future Improvements
 
-PlantDoc is an educational/research project. Model predictions and treatment information should be independently verified by an appropriate agricultural professional before making crop-management decisions.
+- Deploy the application to a cloud platform
+- Add more crop and disease classes
+- Improve robustness using field-condition images
+- Add multilingual support for farmers
+- Add confidence visualization and prediction history
+- Add model versioning and automated evaluation
+- Add an API endpoint for mobile-app integration
+- Add secure production authentication and database storage
 
-## Author
+## 🎓 Academic / Portfolio Context
+
+PlantDoc demonstrates practical experience in:
+
+- Deep learning and transfer learning
+- Computer vision
+- TensorFlow/Keras model integration
+- Flask web development
+- Front-end and back-end integration
+- Image preprocessing and classification
+- Automated PDF and QR-code generation
+- Building an end-to-end machine-learning application
+
+## 👨‍💻 Author
 
 **Md Rafe Akhtar**  
 B.Tech — Electronics & Communication Engineering (Avionics)  
 Central University of Jammu
 
-### Suggested GitHub repository description
+## ⚠️ Disclaimer
 
-> AI-powered plant disease detection web application built with Flask and TensorFlow/Keras, featuring camera/image diagnosis, disease information, PDF reports, and QR-code generation.
+PlantDoc is an educational/research project. Predictions and treatment information should be independently verified by a qualified agricultural professional before making crop-management decisions.
