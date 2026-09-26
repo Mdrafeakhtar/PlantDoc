@@ -38,21 +38,21 @@ The repository includes a sample plant-leaf image used to demonstrate the image-
 
 ### Application screenshots
 
-For the strongest portfolio presentation, add screenshots of these three application states to `docs/screenshots/`:
+#### 1. PlantDoc access screen
 
-1. **Home / upload screen** — `home.png`
-2. **Prediction result** — `prediction.png`
-3. **Generated PDF report / QR result** — `report.png`
+![PlantDoc access screen](docs/screenshots/home.png)
 
-Then replace this section with:
+#### 2. AI disease prediction
 
-```markdown
-![PlantDoc home screen](docs/screenshots/home.png)
-![PlantDoc prediction result](docs/screenshots/prediction.png)
-![PlantDoc report](docs/screenshots/report.png)
-```
+The screenshot below shows a real PlantDoc scan using a leaf image, including the predicted disease, cause, and recommended cure.
 
-> The sample input image is included in the repository. Runtime uploads, generated reports, QR codes, and user data are intentionally excluded from Git.
+![PlantDoc AI prediction result](docs/screenshots/prediction.png)
+
+#### 3. Diagnostic report workflow
+
+![PlantDoc diagnostic report](docs/screenshots/report.png)
+
+> The screenshots are from the PlantDoc application UI. Runtime uploads, generated reports, QR codes, and user data are intentionally excluded from Git.
 
 ## 🔗 Demo
 

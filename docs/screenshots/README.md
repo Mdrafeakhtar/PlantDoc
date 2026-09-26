@@ -1,9 +1,9 @@
 # PlantDoc Screenshots
 
-Add these screenshots here for the GitHub README:
+These screenshots show the PlantDoc web application during normal use:
 
-- `home.png` — PlantDoc home/upload screen
-- `prediction.png` — disease prediction result with confidence
-- `report.png` — generated diagnostic report / QR-code result
+- `home.png` — login/access screen
+- `prediction.png` — completed leaf-disease prediction and recommended cure
+- `report.png` — diagnostic/report workflow
 
-These images are documentation assets only. Do not add private user data or credentials.
+They are included in the main project README for portfolio/demo purposes.
